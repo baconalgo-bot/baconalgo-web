@@ -36,17 +36,21 @@ const BaconHistory = {
         document.body.appendChild(btn);
     },
 
-    async loadTrades() {
+     async loadTrades() {
         try {
-            const { data: trades, error } = await supabase
-                .from('trades')
-                .select('*')
-                .order('created_at', { ascending: false });
-            this.trades = trades || [];
+            // Supabase not configured yet - use mock data
+            // In production: Connect to real Supabase
+            console.log('⚠️ Supabase not configured - using demo trades');
+            this.trades = [
+                { created_at: new Date(), symbol: 'AAPL', broker: 'IB', entry_price: 150, exit_price: 155, pnl: 500 },
+                { created_at: new Date(), symbol: 'TSLA', broker: 'Bitget', entry_price: 250, exit_price: 245, pnl: -350 },
+                { created_at: new Date(), symbol: 'NVDA', broker: 'IB', entry_price: 875, exit_price: 890, pnl: 1500 }
+            ];
         } catch (err) {
             console.error('Trade load error:', err);
         }
     },
+
 
     showHistory() {
         const modal = document.createElement('div');
