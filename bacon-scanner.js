@@ -212,11 +212,18 @@ const BaconScanner = {
         // }
     },
 
+// ... (garder le début pareil)
+
     // ============================================
     // UI DASHBOARD
     // ============================================
     showScannerDashboard() {
+        // Supprimer si existe déjà
+        const existing = document.getElementById('bacon-scanner-modal');
+        if (existing) existing.remove();
+
         const modal = document.createElement('div');
+        modal.id = 'bacon-scanner-modal'; // ID unique pour ciblage facile
         modal.style.cssText = `
             position: fixed;
             top: 0;
@@ -242,12 +249,102 @@ const BaconScanner = {
             overflow-y: auto;
             color: #e2e8f0;
             font-family: monospace;
+            position: relative; /* Pour positionner le bouton close */
         `;
         
+        // BOUTON CLOSE ROBUSTE
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '❌ CLOSE';
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 10px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10004;
+        `;
+        closeBtn.onclick = () => modal.remove(); // Force remove direct
+
+        content.appendChild(closeBtn);
+        
         let html = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="color: #ff6b6b; margin: 0;">🔥 BACONALGO SCANNER - LIVE</h2>
-                <button onclick="document.body.removeChild(document.body.lastChild.parentElement)" style="
+            <div style="margin-top: 40px;"> <!-- Espace pour le bouton close -->
+                <h2 style="color: #ff6b6b; margin: 0 0 20px 0;">🔥 BACONALGO SCANNER - LIVE</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: #1e293b; padding: 15px; border-radius: 8px; border-left: 4px solid #22c55e;">
+                    <div style="color: #94a3b8; font-size: 12px;">SIGNALS TODAY</div>
+                    <div style="color: #22c55e; font-size: 24px; font-weight: bold;">${this.signals.length}</div>
+                </div>
+                <div style="background: #1e293b; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                    <div style="color: #94a3b8; font-size: 12px;">AVG SCORE</div>
+                    <div style="color: #3b82f6; font-size: 24px; font-weight: bold;">
+                        ${this.signals.length > 0 ? Math.round(this.signals.reduce((s, a) => s + a.score, 0) / this.signals.length) : 0}
+                    </div>
+                </div>
+                <div style="background: #1e293b; padding: 15px; border-radius: 8px; border-left: 4px solid #ff6b6b;">
+                    <div style="color: #94a3b8; font-size: 12px;">STATUS</div>
+                    <div style="color: #ff6b6b; font-size: 24px; font-weight: bold;">🔴 LIVE</div>
+                </div>
+            </div>
+            
+            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #94a3b8; margin-top: 0;">LATEST SIGNALS</h3>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid #334155;">
+                            <th style="text-align: left; padding: 10px; color: #667eea;">TIME</th>
+                            <th style="text-align: left; padding: 10px; color: #667eea;">SYMBOL</th>
+                            <th style="text-align: left; padding: 10px; color: #667eea;">ACTION</th>
+                            <th style="text-align: left; padding: 10px; color: #667eea;">PRICE</th>
+                            <th style="text-align: left; padding: 10px; color: #667eea;">SCORE</th>
+                            <th style="text-align: left; padding: 10px; color: #667eea;">REASON</th>
+                        </tr>
+        `;
+        
+        this.signals.slice(0, 20).forEach(signal => {
+            const actionColor = signal.action === 'BUY' ? '#22c55e' : '#ef4444';
+            html += `
+                <tr style="border-bottom: 1px solid #1e293b; hover: background: #1e293b;">
+                    <td style="padding: 10px; color: #94a3b8;">${signal.timestamp}</td>
+                    <td style="padding: 10px; color: #e2e8f0; font-weight: bold;">${signal.symbol}</td>
+                    <td style="padding: 10px; color: ${actionColor}; font-weight: bold;">${signal.action}</td>
+                    <td style="padding: 10px; color: #e2e8f0;">$${signal.price}</td>
+                    <td style="padding: 10px; color: #3b82f6; font-weight: bold;">${signal.score}</td>
+                    <td style="padding: 10px; color: #94a3b8; font-size: 11px;">${signal.reason}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        // Ajouter le HTML au contenu
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        while (tempDiv.firstChild) {
+            content.appendChild(tempDiv.firstChild);
+        }
+        
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+        
+        // Fermer aussi en cliquant dehors
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    },
+
+// ... (reste du code)onclick="document.body.removeChild(document.body.lastChild.parentElement)" style="
                     padding: 10px 20px;
                     background: #ef4444;
                     color: white;
