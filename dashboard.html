@@ -1472,12 +1472,14 @@
     <!-- ========================================== -->
     <!-- 🥓 BACONALGO FULL SUITE MODULES 🥓 -->
     <!-- ========================================== -->
-    
-    <!-- 1. Scanner FIRST (génère les signaux) -->
-    <script src="bacon-scanner.js"></script>
-    
-    <!-- 2. LIVE DASHBOARD (met à jour en temps réel) -->
-    <script src="bacon-live-dashboard.js"></script>
+<!-- AJOUTE EN TOUT PREMIER -->
+<script src="bacon-signal-filter.js"></script>
+
+<!-- Puis les autres scripts dans cet ordre: -->
+<script src="bacon-scanner.js"></script>
+<script src="bacon-live-dashboard.js"></script>
+<!-- ... le reste -->
+
 
     <!-- 2. Configuration Core -->
     <script src="bacon-config.js"></script>
