@@ -1470,62 +1470,36 @@
         </script>
     
     <!-- ========================================== -->
-    <!-- 🥓 BACONALGO "FULL THROTTLE" MODULES 🥓 -->
+    <!-- 🥓 BACONALGO FULL SUITE MODULES 🥓 -->
     <!-- ========================================== -->
- <script src="bacon-scanner.js"></script>   
-    <!-- 1. Configuration Core (MUST BE FIRST) -->
+    
+    <!-- 1. Scanner FIRST (génère les signaux) -->
+    <script src="bacon-scanner.js"></script>
+    
+    <!-- 2. Configuration Core -->
     <script src="bacon-config.js"></script>
 
-    <!-- 2. UI Modules -->
-    <script src="bacon-settings.js"></script>  <!-- Bouton ⚙️ Settings -->
-    <script src="bacon-analytics.js"></script> <!-- Bouton 📈 Analytics -->
-    <script src="bacon-history.js"></script>   <!-- Bouton 📊 History -->
+    <!-- 3. UI Modules -->
+    <script src="bacon-settings.js"></script>
+    <script src="bacon-analytics.js"></script>
+    <script src="bacon-history.js"></script>
     
-    <!-- 3. Logic Modules -->
-    <script src="bacon-risk.js"></script>      <!-- Bouton 🛑 Risk Manager -->
-    <script src="bacon-portfolio.js"></script> <!-- Panel Portfolio -->
-    <script src="bacon-trading.js"></script>   <!-- Execution Engine -->
+    <!-- 4. Logic Modules -->
+    <script src="bacon-risk.js"></script>
+    <script src="bacon-portfolio.js"></script>
+    <script src="bacon-trading.js"></script>
     
-    <!-- 4. Communication Modules -->
-    <script src="bacon-discord.js"></script>   <!-- Discord Alerts -->
-    <script src="bacon-webhooks.js"></script>  <!-- Bouton 🔗 Webhooks -->
+    <!-- 5. Communication -->
+    <script src="bacon-discord.js"></script>
+    <script src="bacon-webhooks.js"></script>
 
-    <!-- 5. SYSTEM INITIALIZATION (The Cherry on Top 🍒) -->
+    <!-- 6. System Check -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log(`
-  ____                         _    _             
- |  _ \\                       | |  | |            
- | |_) | __ _  ___ ___  _ __  | |  | | __ _  ___  
- |  _ < / _\` |/ __/ _ \\| '_ \\ | |  | |/ _\` |/ _ \\ 
- | |_) | (_| | (_| (_) | | | || |__| | (_| | (_) |
- |____/ \\__,_|\\___\\___/|_| |_| \\____/ \\__, |\\___/ 
-                                       __/ |      
-   🚀 SYSTEM ONLINE: FULL GUM MODE    |___/       
-            `);
-            
-            // Check status
-            setTimeout(() => {
-                const modules = [
-                    { name: 'Config', status: window.BaconConfig },
-                    { name: 'Settings', status: window.BaconSettings },
-                    { name: 'Trading', status: window.BaconTrading },
-                    { name: 'Risk', status: window.BaconRisk },
-                    { name: 'Discord', status: window.BaconDiscord }
-                ];
-                
-                console.table(modules);
-                
-                // Notification de bienvenue
-                if(window.BaconDiscord) {
-                    window.BaconDiscord.send({
-                        title: '🚀 BACONALGO STARTED',
-                        description: 'Dashboard loaded with ALL modules active.',
-                        color: 5763719 // Green
-                    });
-                }
-            }, 1000);
-        });
+        console.log('🥓 BACONALGO LOADED - ALL SYSTEMS GO');
+        console.log('Scanner:', window.BaconScanner ? '✅' : '❌');
+        console.log('Config:', window.BaconConfig ? '✅' : '❌');
+        console.log('Discord:', window.BaconDiscord ? '✅' : '❌');
     </script>
 </body>
+
 </html>
