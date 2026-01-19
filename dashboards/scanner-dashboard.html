@@ -13,7 +13,11 @@
       color: #ffffff;
       min-height: 100vh;
     }
+    /* ===== STICKY HEADER ===== */
     header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       background: rgba(21, 21, 21, 0.95);
       border-bottom: 2px solid rgba(255, 107, 53, 0.3);
       padding: 20px 40px;
@@ -22,6 +26,8 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
     }
     .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; }
     .logo span { color: #FF6B35; }
@@ -45,6 +51,11 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
     }
     .container {
       max-width: 1400px;
@@ -138,7 +149,6 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Glassmorphism background */
     .auto-scan-blurred-container::before {
       content: '';
       position: absolute;
@@ -152,14 +162,12 @@
       pointer-events: none;
     }
 
-    /* Content z-index */
     .auto-scan-content {
       position: relative;
       z-index: 2;
       text-align: center;
     }
 
-    /* Animated Badge */
     .premium-badge {
       display: inline-flex;
       align-items: center;
@@ -179,7 +187,6 @@
       animation: pulse 2s infinite;
     }
 
-    /* Pulse animation */
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.7; transform: scale(1.1); }
@@ -196,7 +203,6 @@
       }
     }
 
-    /* Premium Tag */
     .premium-tag {
       font-size: 3.5rem;
       margin-bottom: 20px;
@@ -208,7 +214,6 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* Main Message */
     .auto-scan-text h3 {
       font-size: 1.8rem;
       color: #FF6B35;
@@ -223,7 +228,6 @@
       margin-bottom: 15px;
     }
 
-    /* Features Preview (blurred) */
     .features-preview {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -245,7 +249,6 @@
     .preview-icon { font-size: 1.8rem; margin-bottom: 8px; }
     .preview-name { font-size: 0.85rem; color: #aaaaaa; }
 
-    /* Upgrade CTA */
     .upgrade-cta {
       background: linear-gradient(135deg, #FF6B35, #F7931E);
       padding: 20px 40px;
@@ -259,6 +262,8 @@
       font-weight: 700;
       color: white;
       width: 100%;
+      position: relative;
+      overflow: hidden;
     }
 
     .upgrade-cta:hover {
@@ -270,7 +275,6 @@
       transform: translateY(-2px);
     }
 
-    /* Shine effect */
     .upgrade-cta::after {
       content: '';
       position: absolute;
@@ -287,7 +291,6 @@
       100% { left: 100%; }
     }
 
-    /* Info Box */
     .info-box {
       background: rgba(0, 217, 255, 0.1);
       border-left: 3px solid #00D9FF;
@@ -298,10 +301,61 @@
       font-size: 0.9rem;
     }
 
+    /* ===== BACK TO TOP BUTTON ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      color: white;
+      border: none;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
+      transition: all 0.3s;
+      z-index: 999;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 107, 53, 0.7);
+    }
+
+    .back-to-top.show {
+      display: flex;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 768px) {
+      header { padding: 15px 20px; }
+      nav { gap: 15px; }
       .content-grid { grid-template-columns: 1fr; }
       .features-preview { grid-template-columns: repeat(2, 1fr); }
       h1 { font-size: 1.8rem; }
+      .back-to-top {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.2rem;
+      }
     }
   </style>
 </head>
@@ -322,7 +376,6 @@
     <h1>🔍 Dashboard Scanner - Bacon Scanner</h1>
     
     <div class="content-grid">
-      <!-- Scanner Features -->
       <div class="section">
         <h2>✨ Fonctionnalités Scanner</h2>
         <ul class="feature-list">
@@ -336,7 +389,6 @@
         <button class="upgrade-btn" onclick="redirectToPricing()">Voir les plans supérieurs</button>
       </div>
 
-      <!-- Stream Section -->
       <div class="section">
         <h2>📺 Live Stream Scanner</h2>
         <div class="stream-container">
@@ -348,21 +400,17 @@
     <!-- ===== PROFESSIONAL AUTO-SCAN BLUR ===== -->
     <div class="auto-scan-blurred-container">
       <div class="auto-scan-content">
-        <!-- Animated Premium Badge -->
         <div class="premium-badge">
           Exclusif Plan Station
         </div>
 
-        <!-- Floating Icon -->
         <div class="premium-tag">🤖</div>
 
-        <!-- Main Message -->
         <div class="auto-scan-text">
           <h3>Auto-Scan & Auto-Trade</h3>
           <p>Trading automatique avec connexion Interactive Brokers & Bitget</p>
         </div>
 
-        <!-- Blurred Features Preview -->
         <div class="features-preview">
           <div class="preview-item">
             <div class="preview-icon">📊</div>
@@ -382,12 +430,10 @@
           </div>
         </div>
 
-        <!-- Info Box -->
         <div class="info-box">
           💡 L'Auto-Scan automatise 100% de votre trading. Aucune action manuelle requise!
         </div>
 
-        <!-- Upgrade CTA -->
         <button class="upgrade-cta" onclick="redirectToPricing()">
           🚀 Déverrouiller Bacon Station
         </button>
@@ -395,10 +441,33 @@
     </div>
   </div>
 
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" title="Retour en haut">
+    ↑
+  </button>
+
   <script src="https://unpkg.com/@supabase/supabase-js@2.40.0"></script>
   <script>
     const SUPABASE_URL = 'https://obpsftbaklpxnytvbfki.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icHNmdGJha2xweG55dHZiZmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDk0OTEsImV4cCI6MjA4NDM4NTQ5MX0._mCGafrr3ealkXWAn9E1anpTgLT6aPib3ADI8UDDjHY';
+
+    // Back to Top Button Logic
+    const backToTopBtn = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
 
     async function handleLogout() {
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
