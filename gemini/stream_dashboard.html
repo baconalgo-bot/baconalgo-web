@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaconAlgo - Live Stream View</title>
+    <style>
+        :root { --color-primary: #f59e0b; --color-bg-dark: #0f1419; }
+        body { background: var(--color-bg-dark); color: white; font-family: sans-serif; margin: 0; padding: 20px; }
+        .stream-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-primary); padding-bottom: 10px; margin-bottom: 20px; }
+        .live-badge { background: red; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .tv-embed { width: 100%; height: 600px; background: #1a1f2e; border-radius: 8px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="stream-header">
+        <div><span style="font-weight:900; color:var(--color-primary);">🥓 BACONALGO</span> LIVE</div>
+        <div class="live-badge">REC ● LIVE</div>
+    </div>
+    
+    <div class="tv-embed">
+        <p style="color:#555;">[ Flux TradingView en cours de chargement... ]</p>
+    </div>
+
+    <div style="margin-top:20px; text-align:center;">
+        <a href="dashboard.html" style="color:var(--color-primary); text-decoration:none;">← Retour au Dashboard</a>
+    </div>
+<div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; border: 3px solid #FF6B35; box-shadow: 0 0 30px rgba(255, 107, 53, 0.3);">
+    <iframe 
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+        src="https://www.youtube.com/embed/rDBQVWjAnEI?autoplay=1&mute=1" 
+        title="BaconAlgo Live 24/7" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+    </iframe>
+</div></body>
+</html>

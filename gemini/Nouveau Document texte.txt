@@ -1,0 +1,22 @@
+// ==========================================
+// 🥓 BACON CONFIG - CERVEAU CENTRAL
+// ==========================================
+
+// 1. LIENS SUPABASE
+// ⚠️ REMPLACE L'URL CI-DESSOUS par la tienne (Settings > API dans Supabase)
+const supabaseUrl = 'https://vnscwjgaboiefxjlosbp.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_0w0MQ6806XKHviOHgVKmfA_eE98keEZ'; // Ta clé publique
+
+// 2. LIENS DE PAIEMENT STRIPE
+const STRIPE_LINKS = {
+    indicator: 'https://buy.stripe.com/test_6oUeVdaOJ0Hf3Z31rJ5Vu02', // Plan 20$
+    scanner:   'https://buy.stripe.com/test_5kQeVdcWRey5anrgmD5Vu01',   // Plan 30$
+    station:   'https://buy.stripe.com/test_bJecN5f4Z89H8fj6M35Vu00'    // Plan 50$
+};
+
+// Vérification console
+console.log("🥓 BaconAlgo Config Chargée !");
+
+
+
+

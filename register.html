@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription - BaconAlgo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥓</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(21, 21, 21, 0.95);
+      border: 2px solid rgba(255, 107, 53, 0.3);
+      border-radius: 20px;
+      padding: 50px 40px;
+      backdrop-filter: blur(10px);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo-icon { font-size: 2.5rem; margin-bottom: 15px; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: #aaaaaa;
+      font-size: 0.95rem;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #FF6B35;
+      background: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+    input::placeholder { color: #666666; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .success-message {
+      background: rgba(0, 217, 255, 0.1);
+      border: 1px solid #00D9FF;
+      color: #00D9FF;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 0.95rem;
+    }
+    .error-message {
+      background: rgba(255, 84, 89, 0.1);
+      border: 1px solid #FF5459;
+      color: #FF5459;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 0.95rem;
+    }
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #aaaaaa;
+    }
+    .links a {
+      color: #FF6B35;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .links a:hover { text-decoration: underline; }
+    .code-display {
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #00D9FF;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-icon">🥓</div>
+      <h1>S'inscrire</h1>
+      <p class="subtitle">Créez votre compte BaconAlgo</p>
+    </div>
+
+    <div class="success-message" id="successMsg"></div>
+    <div class="error-message" id="errorMsg"></div>
+
+    <form id="registerForm" onsubmit="handleRegister(event)">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">📧 Email</label>
+        <input type="email" id="email" name="email" required placeholder="votre@email.com" />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">🔐 Mot de passe</label>
+        <input type="password" id="password" name="password" required placeholder="Min. 8 caractères" />
+      </div>
+
+      <!-- Plan -->
+      <div class="form-group">
+        <label for="plan">📦 Plan</label>
+        <select id="plan" name="plan" required>
+          <option value="">Choisir un plan...</option>
+          <option value="indicator">Bacon Buy Sell Indicator (20$/mois)</option>
+          <option value="scanner">Bacon Scanner (30$/mois)</option>
+          <option value="station">Bacon Station Auto-Trade IB (50$/mois)</option>
+        </select>
+      </div>
+
+      <!-- Activation Code -->
+      <div class="form-group">
+        <label for="activationCode">🎟️ Code d'activation (si applicable)</label>
+        <input type="text" id="activationCode" name="activationCode" placeholder="Code d'activation (optionnel)" />
+        <div class="code-display" id="codeDisplay" style="display:none;"></div>
+      </div>
+
+      <!-- Terms -->
+      <div class="form-group" style="display: flex; align-items: flex-start; gap: 10px;">
+        <input type="checkbox" id="terms" name="terms" required style="width: auto; margin-top: 4px;" />
+        <label for="terms" style="margin: 0;">
+          J'accepte les <a href="#" style="color: #FF6B35;">conditions d'utilisation</a> et la <a href="#" style="color: #FF6B35;">politique de confidentialité</a>
+        </label>
+      </div>
+
+      <button type="submit" class="btn">
+        <span id="btnText">S'inscrire</span>
+        <span id="btnLoading" class="loading" style="display:none;"></span>
+      </button>
+    </form>
+
+    <div class="links">
+      Déjà inscrit? <a href="login.html">Se connecter</a>
+    </div>
+  </div>
+
+  <!-- NOUVELLE SOURCE SUPABASE - PLUS FIABLE -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.40.0"></script>
+  
+  <script>
+    console.log('🚀 Page register.html chargée');
+
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://obpsftbaklpxnytvbfki.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icHNmdGJha2xweG55dHZiZmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDk0OTEsImV4cCI6MjA4NDM4NTQ5MX0._mCGafrr3ealkXWAn9E1anpTgLT6aPib3ADI8UDDjHY';
+
+    let supabase;
+    
+    // Attends que la lib Supabase soit chargée
+    const initSupabase = () => {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log('✅ Client Supabase initialisé avec succès');
+        return true;
+      } catch (err) {
+        console.error('❌ Erreur initialisation Supabase:', err);
+        return false;
+      }
+    };
+
+    // Initialise immédiatement
+    if (!initSupabase()) {
+      // Si ça échoue, réessaie après un délai
+      setTimeout(() => {
+        if (!initSupabase()) {
+          console.error('❌ Impossible de charger Supabase après 2 tentatives');
+        }
+      }, 2000);
+    }
+
+    // Check for activation code in URL
+    const params = new URLSearchParams(window.location.search);
+    const urlCode = params.get('code');
+    const urlPlan = params.get('plan');
+
+    if (urlCode) {
+      document.getElementById('activationCode').value = urlCode;
+      document.getElementById('codeDisplay').textContent = '✅ Code automatiquement rempli: ' + urlCode;
+      document.getElementById('codeDisplay').style.display = 'block';
+    }
+
+    if (urlPlan) {
+      document.getElementById('plan').value = urlPlan;
+    }
+
+    // Handle registration
+    async function handleRegister(e) {
+      e.preventDefault();
+      console.log('📝 Formulaire soumis');
+
+      if (!supabase) {
+        showError('❌ Supabase n\'est pas encore chargé. Attends un moment et réessaie...');
+        return;
+      }
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const plan = document.getElementById('plan').value;
+      const activationCode = document.getElementById('activationCode').value.trim();
+      const terms = document.getElementById('terms').checked;
+
+      console.log('📋 Données du formulaire:', { email, plan, terms });
+
+      // Validation
+      if (!email || !password || !plan) {
+        showError('❌ Veuillez remplir tous les champs obligatoires');
+        return;
+      }
+
+      if (password.length < 8) {
+        showError('❌ Le mot de passe doit contenir au moins 8 caractères');
+        return;
+      }
+
+      if (!terms) {
+        showError('❌ Vous devez accepter les conditions d\'utilisation');
+        return;
+      }
+
+      // Show loading
+      const btn = document.querySelector('.btn');
+      const btnText = document.getElementById('btnText');
+      const btnLoading = document.getElementById('btnLoading');
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-block';
+
+      try {
+        console.log('🔄 Début de l\'inscription...');
+        console.log('Email:', email, 'Plan:', plan);
+
+        // Sign up with Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+        });
+
+        console.log('📡 Réponse Supabase:', { data, error });
+
+        if (error) {
+          throw new Error(error.message || 'Erreur lors de l\'inscription');
+        }
+
+        if (!data || !data.user) {
+          throw new Error('Erreur: Les données utilisateur ne sont pas disponibles');
+        }
+
+        const userId = data.user.id;
+        console.log('✅ Utilisateur créé:', userId);
+
+        // Success!
+        showSuccess('✅ Inscription réussie! Un email de confirmation a été envoyé à ' + email + '. Redirection dans 3 secondes...');
+        
+        // Store session - TRY MULTIPLE WAYS
+        console.log('🔍 Données reçues:', { data, session: data.session });
+        
+        // Method 1: Store from response
+        if (data.session) {
+          localStorage.setItem('supabase_session', JSON.stringify(data.session));
+          console.log('📦 Session sauvegardée (Method 1):', data.session.access_token);
+        } else {
+          console.log('⚠️ Pas de session dans data.session, tentative Method 2...');
+          
+          // Method 2: Get session directly from Supabase
+          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+          if (sessionData?.session) {
+            localStorage.setItem('supabase_session', JSON.stringify(sessionData.session));
+            console.log('📦 Session sauvegardée (Method 2):', sessionData.session.access_token);
+          } else {
+            console.log('⚠️ Pas de session trouvée (sessionError:', sessionError, ')');
+            // Method 3: Store user ID at least
+            localStorage.setItem('supabase_user_id', userId);
+          }
+        }
+        
+        localStorage.setItem('user_plan', plan);
+        localStorage.setItem('activation_code', activationCode || '');
+        localStorage.setItem('user_email', email);
+
+        console.log('✅ LocalStorage contents:', {
+          has_session: !!localStorage.getItem('supabase_session'),
+          has_user_id: !!localStorage.getItem('supabase_user_id'),
+          has_plan: !!localStorage.getItem('user_plan'),
+          has_email: !!localStorage.getItem('user_email')
+        });
+
+        console.log('🚀 Redirection vers dashboard.html dans 3 secondes...');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+          console.log('🔗 Redirection maintenant...');
+          window.location.href = 'dashboard.html';
+        }, 3000);
+
+      } catch (error) {
+        console.error('❌ Registration error:', error);
+        showError('❌ ' + error.message);
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
+    }
+
+    function showError(msg) {
+      console.log('🔴 Erreur affichée:', msg);
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      console.log('🟢 Succès affiché:', msg);
+      const successMsg = document.getElementById('successMsg');
+      successMsg.textContent = msg;
+      successMsg.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

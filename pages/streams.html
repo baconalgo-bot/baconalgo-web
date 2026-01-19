@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tous les Streams - BaconAlgo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥓</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(21, 21, 21, 0.95);
+      border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; }
+    .logo span { color: #FF6B35; }
+    nav { display: flex; gap: 20px; align-items: center; }
+    nav a { color: #aaaaaa; text-decoration: none; transition: color 0.3s; }
+    nav a:hover { color: #FF6B35; }
+    .logout-btn {
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 1600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: #aaaaaa;
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+    .streams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    .stream-card {
+      background: rgba(21, 21, 21, 0.95);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .stream-card:hover {
+      border-color: #FF6B35;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+    }
+    .stream-header {
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(247, 147, 30, 0.3));
+      border-bottom: 1px solid rgba(255, 107, 53, 0.3);
+      padding: 20px;
+    }
+    .stream-title {
+      font-size: 1.3rem;
+      color: #FF6B35;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .stream-subtitle {
+      color: #aaaaaa;
+      font-size: 0.9rem;
+    }
+    .stream-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    .stream-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .stream-info {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 107, 53, 0.2);
+    }
+    .stream-info p {
+      color: #aaaaaa;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+    .stream-info p:last-child {
+      margin-bottom: 0;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255, 107, 53, 0.2);
+      border: 1px solid rgba(255, 107, 53, 0.5);
+      color: #FF6B35;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .live-badge {
+      background: rgba(0, 217, 255, 0.2);
+      border-color: #00D9FF;
+      color: #00D9FF;
+    }
+    .contact-section {
+      background: rgba(255, 107, 53, 0.05);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+    }
+    .contact-section h2 {
+      color: #FF6B35;
+      margin-bottom: 15px;
+    }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 8px;
+      color: #FF6B35;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .social-link:hover {
+      background: rgba(255, 107, 53, 0.2);
+      border-color: #FF6B35;
+    }
+    @media (max-width: 768px) {
+      .streams-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      🥓 <span>BaconAlgo</span>
+    </div>
+    <nav>
+      <a href="../dashboard.html">← Retour Dashboard</a>
+      <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>📺 Tous les Streams en Direct</h1>
+    <p class="subtitle">Regardez les analyses en direct pour tous les plans</p>
+
+    <div class="streams-grid">
+      <!-- Free Stream -->
+      <div class="stream-card">
+        <div class="stream-header">
+          <div class="stream-title">🎓 Free Stream</div>
+          <div class="stream-subtitle">Analyses gratuites pour tous</div>
+        </div>
+        <div class="stream-container">
+          <iframe src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxxxx" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="stream-info">
+          <p>📍 <strong>Lundi à Vendredi, 14h00 EST</strong></p>
+          <p>Apprenez les bases du trading avec nos indicateurs gratuits. Questions en direct dans le chat!</p>
+          <span class="badge">Gratuit</span>
+        </div>
+      </div>
+
+      <!-- Scanner Stream -->
+      <div class="stream-card">
+        <div class="stream-header">
+          <div class="stream-title">🔍 Scanner Stream</div>
+          <div class="stream-subtitle">Analyses Scanner en direct</div>
+        </div>
+        <div class="stream-container">
+          <iframe src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxyyyy" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="stream-info">
+          <p>📍 <strong>Mercredi à 10h00 EST</strong></p>
+          <p>Démonstration live du Bacon Scanner avec screenshare complet. Détection de setups en temps réel.</p>
+          <span class="badge">Plans: Scanner, Station</span>
+        </div>
+      </div>
+
+      <!-- Station Stream -->
+      <div class="stream-card">
+        <div class="stream-header">
+          <div class="stream-title">👑 Station Stream</div>
+          <div class="stream-subtitle">Auto-Trade en action</div>
+        </div>
+        <div class="stream-container">
+          <iframe src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxxzzzz" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="stream-info">
+          <p>📍 <strong>Jeudi à 16h00 EST</strong></p>
+          <p>Regardez la Bacon Station trader automatiquement. P&L en direct, analyses de trades exécutés.</p>
+          <span class="badge">Exclusif Station</span>
+        </div>
+      </div>
+
+      <!-- Masterclass Stream -->
+      <div class="stream-card">
+        <div class="stream-header">
+          <div class="stream-title">🎓 Masterclass</div>
+          <div class="stream-subtitle">Formations avancées</div>
+        </div>
+        <div class="stream-container">
+          <iframe src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxxmmmm" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="stream-info">
+          <p>📍 <strong>Dimanche à 12h00 EST</strong></p>
+          <p>Deep dive sur les stratégies avancées, gestion des risques, et psychologie du trading.</p>
+          <span class="badge">Premium</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+      <h2>Rejoignez notre Communauté</h2>
+      <p>Questions pendant les streams? Discord ou chat YouTube en direct.</p>
+      <div class="social-links">
+        <a href="#" class="social-link">
+          💬 Discord
+        </a>
+        <a href="https://youtube.com/@baconcoin" class="social-link" target="_blank">
+          📺 YouTube
+        </a>
+        <a href="#" class="social-link">
+          🐦 Twitter
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2.40.0"></script>
+  <script>
+    const SUPABASE_URL = 'https://obpsftbaklpxnytvbfki.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icHNmdGJha2xweG55dHZiZmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDk0OTEsImV4cCI6MjA4NDM4NTQ5MX0._mCGafrr3ealkXWAn9E1anpTgLT6aPib3ADI8UDDjHY';
+
+    async function handleLogout() {
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      await supabase.auth.signOut();
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+</body>
+</html>

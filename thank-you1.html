@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Merci — Activation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #FF6B35;
+      --card-bg: #151515;
+      --border: #222222;
+      --text: #ffffff;
+      --text-secondary: #aaaaaa;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      padding: 40px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: var(--text);
+    }
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      padding: 50px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 20px; color: var(--primary); font-weight: 900; }
+    p { color: var(--text-secondary); margin-bottom: 20px; }
+    input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--border); background: #0a0a0a; color: var(--text); border-radius: 8px; font-size: 16px; }
+    button { width: 100%; padding: 14px; background: linear-gradient(135deg, #FF6B35, #F7931E); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 16px; }
+    button:hover { transform: translateY(-2px); }
+    .error { color: #ff4444; margin-top: 10px; display: none; font-weight: 600; }
+    .success { color: #00D9FF; margin-top: 10px; display: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎉 Merci!</h1>
+    <p>Code promo? (ILOVEBACON&TEA, FREEBACON, BACON20, BACON50)</p>
+    <input type="text" id="code" placeholder="Code optionnel..." />
+    <button onclick="activate()">Activer</button>
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://6bpsftbaklpxnytvtbfk.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // REMPLACE PAR TA CLÉ
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    const codes = {
+      "ILOVEBACON&TEA": { plan: "station", days: 99999 },
+      "FREEBACON": { plan: "free", days: 7 },
+      "BACON20": { discount: 0.20 },
+      "BACON50": { discount: 0.50 }
+    };
+
+    async function activate() {
+      const code = document.getElementById("code").value.trim().toUpperCase();
+      const params = new URLSearchParams(window.location.search);
+      let plan = params.get("plan") || "free";
+      let days = parseInt(params.get("days")) || 7;
+
+      if (code && codes[code]) {
+        if (codes[code].plan) plan = codes[code].plan;
+        if (codes[code].days) days = codes[code].days;
+      } else if (code) {
+        document.getElementById("error").textContent = "❌ Code invalide!";
+        document.getElementById("error").style.display = "block";
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (!data?.session?.access_token) { window.location.href = "login.html"; return; }
+
+      const r = await fetch("/api/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + data.session.access_token },
+        body: JSON.stringify({ plan, days, code })
+      });
+
+      if (r.ok) {
+        document.getElementById("success").textContent = "✅ Accès activé! Redirection...";
+        document.getElementById("success").style.display = "block";
+        setTimeout(() => window.location.href = "dashboard.html", 1500);
+      } else {
+        const err = await r.json();
+        document.getElementById("error").textContent = "❌ " + (err.error || "Erreur");
+        document.getElementById("error").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>

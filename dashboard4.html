@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥓 BaconAlgo - Protection</title>
+    
+    <!-- 1. LE RIDEAU DE FER : On cache tout immédiatement -->
+    <style>
+        body { margin: 0; background: #000; color: white; font-family: sans-serif; }
+        
+        /* Ce bloc contient TOUT ton site */
+        #protected-content {
+            display: none; /* CACHÉ PAR DÉFAUT !!! */
+        }
+
+        /* L'écran de chargement visible par défaut */
+        #security-check {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #FF6B35;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <!-- Ton CSS existant (juste pour le style du contenu une fois chargé) -->
+    <style>
+        /* ... COPIE TON CSS ICI (celui du fichier précédent) ... */
+        /* Je remets le CSS de base pour que ça marche direct */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        :root { --primary: #FF6B35; --dark: #0a0a0a; --card-bg: #151515; --text: #fff; }
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 40px 30px; }
+        .nav-container { display: flex; justify-content: space-between; padding: 20px 30px; border-bottom: 1px solid #222; }
+        .sentiment-card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #222; margin-top: 20px; }
+        h1 { font-family: 'Inter', sans-serif; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+    <!-- 2. L'ÉCRAN DE SÉCURITÉ (Seul truc visible au début) -->
+    <div id="security-check">
+        <div class="spinner"></div>
+        <div>Vérification des accès...</div>
+    </div>
+
+    <!-- 3. LE CONTENU PROTÉGÉ (Caché par le CSS display: none) -->
+    <div id="protected-content">
+        
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <div style="font-weight:900; color:#FF6B35; font-size:1.5rem;">🥓 BaconAlgo</div>
+                <div style="display:flex; gap:20px; align-items:center;">
+                    <span id="userDisplay">Chargement...</span>
+                    <button id="logoutBtn" style="background:#f85149; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenu Dashboard -->
+        <div class="main-container">
+            <h1>📈 MARKET SENTIMENT</h1>
+            <div class="sentiment-card">
+                <h3>S&P 500</h3>
+                <div style="font-size:2rem;">😐 NEUTRAL</div>
+                <div style="color:#f85149;">-0.27%</div>
+            </div>
+            <!-- ... Reste de ton contenu ... -->
+        </div>
+
+    </div>
+
+    <!-- 4. LE SCRIPT DE SÉCURITÉ -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = 'https://baconalgo-web.vercel.app';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZXdzeXllbmptY3plaHdrYWZnIiwiYWxkIjoiYXNzb2NpYXRlZCIsInNlc3Npb25faWQiOiI3YzI2MzMzYS0zMWM5LTRkNDAtYmIzMS1kYTQxNGI1OTZhMzYifQ.nOINYkm0OggaBROGMzVlKhJxwE_xc0Tq3wCQ6FDn6pE';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function checkAccess() {
+            // 1. Vérifier si l'utilisateur est connecté
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                // ⛔️ PAS CONNECTÉ -> DEHORS IMMÉDIATEMENT
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 2. (Optionnel mais recommandé) Vérifier la table users
+            /*
+            const { data: userDb } = await supabase.from('users').select('*').eq('email', user.email).single();
+            if (!userDb) {
+                await supabase.auth.signOut();
+                window.location.href = 'login.html';
+                return;
+            }
+            */
+
+            // ✅ ACCÈS AUTORISÉ : On lève le rideau !
+            document.getElementById('userDisplay').innerText = user.email;
+            
+            // Cache l'écran de chargement
+            document.getElementById('security-check').style.display = 'none';
+            // Affiche le contenu
+            document.getElementById('protected-content').style.display = 'block';
+        }
+
+        // Lancer la vérification
+        checkAccess();
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

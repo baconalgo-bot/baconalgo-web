@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/dashboard", "destination": "/dashboard.html", "permanent": true },
+    { "source": "/login", "destination": "/login.html", "permanent": true },
+    { "source": "/register", "destination": "/register.html", "permanent": true },
+    { "source": "/pricing", "destination": "/pricing.html", "permanent": true }
+  ]
+}

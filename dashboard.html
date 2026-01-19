@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - BaconAlgo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥓</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(21, 21, 21, 0.95);
+      border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; }
+    .logo span { color: #FF6B35; }
+    nav { display: flex; gap: 30px; align-items: center; }
+    nav a { color: #aaaaaa; text-decoration: none; transition: color 0.3s; }
+    nav a:hover, nav a.active { color: #FF6B35; }
+    .plan-badge {
+      background: rgba(255, 107, 53, 0.2);
+      border: 1px solid #FF6B35;
+      color: #FF6B35;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .logout-btn {
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4); }
+    .container {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    .loading {
+      text-align: center;
+      color: #FF6B35;
+      font-size: 1.2rem;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      🥓 <span>BaconAlgo</span>
+    </div>
+    <nav>
+      <a href="#" class="active">Dashboard</a>
+      <span class="plan-badge" id="planBadge">Chargement...</span>
+      <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="loading" id="loadingMsg">🔄 Redirection vers votre dashboard...</div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2.40.0"></script>
+  
+  <script>
+    const SUPABASE_URL = 'https://obpsftbaklpxnytvbfki.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icHNmdGJha2xweG55dHZiZmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDk0OTEsImV4cCI6MjA4NDM4NTQ5MX0._mCGafrr3ealkXWAn9E1anpTgLT6aPib3ADI8UDDjHY';
+
+    let supabase;
+
+    const initSupabase = () => {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        return true;
+      } catch (err) {
+        console.error('❌ Erreur Supabase:', err);
+        return false;
+      }
+    };
+
+    async function checkAuthAndRedirect() {
+      if (!initSupabase()) {
+        setTimeout(checkAuthAndRedirect, 2000);
+        return;
+      }
+
+      try {
+        const sessionStr = localStorage.getItem('supabase_session');
+        if (sessionStr) {
+          const session = JSON.parse(sessionStr);
+          await supabase.auth.setSession(session);
+        }
+
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Get user plan from localStorage
+        const userPlan = localStorage.getItem('user_plan') || 'free';
+        console.log('📋 Plan utilisateur:', userPlan);
+        
+        // Update badge
+        const planNames = {
+          'indicator': 'Bacon Indicator',
+          'scanner': 'Bacon Scanner',
+          'station': 'Bacon Station'
+        };
+        document.getElementById('planBadge').textContent = planNames[userPlan] || 'Free';
+
+        // Redirect based on plan
+        let dashboardUrl = 'dashboards/free-dashboard.html';
+        
+        if (userPlan === 'scanner') {
+          dashboardUrl = 'dashboards/scanner-dashboard.html';
+        } else if (userPlan === 'station') {
+          dashboardUrl = 'dashboards/station-dashboard.html';
+        }
+
+        console.log('🔗 Redirection vers:', dashboardUrl);
+        window.location.href = dashboardUrl;
+
+      } catch (error) {
+        console.error('❌ Erreur:', error);
+        window.location.href = 'login.html';
+      }
+    }
+
+    async function handleLogout() {
+      if (supabase) await supabase.auth.signOut();
+      localStorage.removeItem('supabase_session');
+      localStorage.removeItem('user_email');
+      localStorage.removeItem('user_plan');
+      window.location.href = 'login.html';
+    }
+
+    checkAuthAndRedirect();
+  </script>
+</body>
+</html>
