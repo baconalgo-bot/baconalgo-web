@@ -132,6 +132,7 @@
   </style>
 </head>
 <body>
+<<<<<<< HEAD
   <div class="container">
     <div class="header">
       <div class="logo-icon">🥓</div>
@@ -289,5 +290,181 @@
       document.getElementById('errorMsg').style.display = 'none';
     }
   </script>
+=======
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🥓</div>
+                <div class="logo-text">
+                    <div class="logo-title">BaconAlgo</div>
+                    <div class="logo-subtitle">Trading Platform</div>
+                </div>
+            </a>
+
+            <a href="index.html" class="nav-back">
+                <span>←</span>
+                <span>Retour à l'accueil</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="logo-big">🥓</div>
+                <h1 class="title">Connexion</h1>
+                <p class="subtitle">Bienvenue à la Station BaconAlgo</p>
+            </div>
+
+            <div class="error" id="error-msg"></div>
+            <div class="success" id="success-msg"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email ou Nom d'utilisateur</label>
+                    <input 
+                        type="text" 
+                        id="email" 
+                        name="email" 
+                        placeholder="jean@example.com" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        required
+                    >
+                </div>
+
+                <div class="remember-forgot">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Se souvenir de moi</label>
+                    </div>
+                    <a href="#" class="forgot-password">Mot de passe oublié?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="submitBtn">
+                    Se Connecter
+                </button>
+            </form>
+
+            <div class="divider">Ou continuer avec</div>
+
+            <div class="social-buttons">
+                <button class="btn-social" onclick="loginWithGoogle()">
+                    🔵 Google
+                </button>
+                <button class="btn-social" onclick="loginWithGithub()">
+                    ⚫ GitHub
+                </button>
+            </div>
+
+            <p class="signup-link">
+                Pas encore de compte? <a href="register.html">S'inscrire</a>
+            </p>
+        </div>
+    </div>
+
+ <!-- 1. Charge Supabase (avec vérification pour ne pas le charger 2 fois) -->
+<script>
+  if (!window.supabase) {
+    var script = document.createElement('script');
+    script.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
+    script.onload = initSupabase;
+    document.head.appendChild(script);
+  } else {
+    initSupabase();
+  }
+
+  function initSupabase() {
+    // 2. Initialisation SAFE (évite "already declared")
+    if (!window.supabaseClient) {
+      var SUPABASE_URL = 'https://bzewsyyenjmcjeahwkafg.supabase.co';
+      var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZXdzeXllbmptY3plYWh3a2FmZyIsImFkdiI6ImFzc29jaWF0ZWQiLCJzZXNzaW9uX2lkIjoiN2MyNjMzM2EtMzFjOS00ZDQwLWJiMzEtZGE0MTRiNTk2YTM2In0.nOINYkm0OggaBROGMzVlKhJxwE_xc0Tq3wCQ6FDn6pE';
+      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+
+    // 3. Gestion du Formulaire
+    var loginForm = document.getElementById('loginForm');
+    
+    // Supprime les anciens listeners pour éviter les doublons (magie noire)
+    var newLoginForm = loginForm.cloneNode(true);
+    loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+
+    newLoginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+      var remember = document.getElementById('remember').checked;
+      var submitBtn = document.getElementById('submitBtn');
+      var errorDiv = document.getElementById('error-msg');
+      var successDiv = document.getElementById('success-msg');
+
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Connexion...';
+
+      try {
+        var { data, error } = await window.supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) throw error;
+
+        if (remember) {
+          localStorage.setItem('baconAlgoUser', JSON.stringify({ email: email }));
+        }
+
+        successDiv.style.display = 'block';
+        successDiv.textContent = '✅ Connexion réussie! Redirection...';
+        
+        setTimeout(function() {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+
+      } catch (err) {
+        console.error('Login error:', err);
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = '❌ Erreur: ' + (err.message || 'Identifiants incorrects');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Se Connecter';
+      }
+    });
+
+    // 4. Charger l'email sauvegardé
+    var savedUser = localStorage.getItem('baconAlgoUser');
+    if (savedUser) {
+      try {
+        var user = JSON.parse(savedUser);
+        if (user.email) {
+            document.getElementById('email').value = user.email;
+            document.getElementById('remember').checked = true;
+        }
+      } catch (e) {}
+    }
+  }
+
+  // Fonctions globales pour les boutons (hors du module)
+  window.loginWithGoogle = function() {
+      alert('🔵 Intégration Google OAuth en cours...\n\nCette fonctionnalité sera disponible bientôt!');
+  }
+
+  window.loginWithGithub = function() {
+      alert('⚫ Intégration GitHub OAuth en cours...\n\nCette fonctionnalité sera disponible bientôt!');
+  }
+</script>
+>>>>>>> d366bc6 (update)
 </body>
 </html>

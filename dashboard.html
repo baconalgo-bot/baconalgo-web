@@ -153,7 +153,128 @@
       window.location.href = 'login.html';
     }
 
+<<<<<<< HEAD
     checkAuthAndRedirect();
   </script>
+=======
+        function switchIBKRMode() {
+            const mode = document.querySelector('input[name="ibkr-mode"]:checked').value;
+            const port = mode === 'paper' ? 7497 : 7496;
+            alert(`🔄 IBKR switched to ${mode.toUpperCase()} trading (Port: ${port})`);
+        }
+
+        function switchBitgetMode() {
+            const mode = document.querySelector('input[name="bitget-mode"]:checked').value;
+            alert(`🔄 Bitget switched to ${mode.toUpperCase()} trading`);
+        }
+
+        function connectBitget() {
+            const status = document.getElementById('bitget-status');
+            const mode = document.querySelector('input[name="bitget-mode"]:checked').value;
+            status.classList.add('connected');
+            status.innerHTML = `<span>🟢 Bitget Connected (${mode.toUpperCase()})</span><span class="status-dot green"></span>`;
+            alert(`✅ Connected to Bitget (${mode.toUpperCase()})!`);
+        }
+
+        function disconnectBitget() {
+            const status = document.getElementById('bitget-status');
+            status.classList.remove('connected');
+            status.innerHTML = '<span>🔴 Bitget Disconnected</span><span class="status-dot red"></span>';
+            alert('🛑 Disconnected from Bitget!');
+        }
+
+        function changeRisk(type, amount) {
+            const input = document.getElementById(type + '-value');
+            let newVal = parseInt(input.value) + amount;
+            if (newVal < 0) newVal = 0;
+            input.value = newVal;
+        }
+
+        function startScan() {
+            alert('🚀 Starting scan...\n\nScanning all selected markets for top signals!');
+        }
+
+        // Auto-refresh toggle
+        document.getElementById('auto-refresh-btn').addEventListener('click', function() {
+            const isActive = this.textContent.includes('OFF');
+            this.textContent = isActive ? '🔄 Auto-Refresh: ON' : '🔄 Auto-Refresh: OFF';
+            this.style.background = isActive ? 'linear-gradient(135deg, var(--success), #00b8d4)' : '';
+            alert(isActive ? '✅ Auto-refresh ENABLED!' : '🛑 Auto-refresh DISABLED!');
+        });
+        </script>
+    
+    <!-- ========================================== -->
+    <!-- 🥓 BACONALGO FULL SUITE MODULES 🥓 -->
+    <!-- ========================================== -->
+<!-- AJOUTE EN TOUT PREMIER -->
+<script src="bacon-signal-filter-v2.js"></script>
+
+<!-- Puis les autres scripts dans cet ordre: -->
+<script src="bacon-scanner.js"></script>
+<script src="bacon-live-dashboard-v3.js"></script>
+<!-- ... le reste -->
+
+
+    <!-- 2. Configuration Core -->
+    <script src="bacon-config.js"></script>
+
+    <!-- 3. UI Modules -->
+    <script src="bacon-settings.js"></script>
+    <script src="bacon-analytics.js"></script>
+    <script src="bacon-history.js"></script>
+    
+    <!-- 4. Logic Modules -->
+    <script src="bacon-risk.js"></script>
+    <script src="bacon-portfolio.js"></script>
+    <script src="bacon-trading.js"></script>
+    
+    <!-- 5. Communication -->
+  <!-- BaconDiscord disabled - using scanner mock -->
+<!-- <script src="bacon-discord.js"></script> -->
+
+    <script src="bacon-webhooks.js"></script>
+
+    <!-- 6. System Check -->
+    <script>
+        console.log('🥓 BACONALGO LOADED - ALL SYSTEMS GO');
+        console.log('Scanner:', window.BaconScanner ? '✅' : '❌');
+        console.log('Config:', window.BaconConfig ? '✅' : '❌');
+        console.log('Discord:', window.BaconDiscord ? '✅' : '❌');
+    </script>
+<script src="bacon-supabase-init.js"></script>
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+  // 🥓 BACON DASHBOARD - AUTH SYNC
+  const SUPABASE_URL = 'https://baconalgo-web.vercel.app';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZXdzeXllbmptY3plaHdrYWZnIiwiYWxkIjoiYXNzb2NpYXRlZCIsInNlc3Npb25faWQiOiI3YzI2MzMzYS0zMWM5LTRkNDAtYmIzMS1kYTQxNGI1OTZhMzYifQ.nOINYkm0OggaBROGMzVlKhJxwE_xc0Tq3wCQ6FDn6pE';
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ✅ CHECK AUTH ON LOAD
+  document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      console.log('✅ Connecté:', user.email);
+      // Affiche le nom/email si tu veux
+      document.getElementById('userName')?.innerText = user.email.split('@')[0];
+    } else {
+      // Pas connecté -> Redirection login
+      console.log('❌ Non connecté');
+      window.location.href = 'login.html';
+    }
+  });
+
+  // 🔓 LOGOUT
+  document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  });
+</script>
+
+>>>>>>> d366bc6 (update)
 </body>
 </html>
